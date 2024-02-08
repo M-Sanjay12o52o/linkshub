@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const ADD_POST = gql`
-  mutation AddPost($url: String, $title: string) {
+  mutation AddPost($url: String, $title: String) {
     addPost(url: $url, title: $title) {
       createdAt
       id
@@ -28,6 +28,16 @@ export const UPDATE_POST = gql`
       id
       url
       title
+    }
+  }
+`;
+
+export const VOTE = gql`
+  mutation Vote($postId: ID!, $userId: ID!) {
+    vote(postId: $postId, userId: $userId) {
+      id
+      postId
+      userId
     }
   }
 `;

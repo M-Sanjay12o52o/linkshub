@@ -14,10 +14,21 @@ export const GET_POSTS = gql`
 
 export const GET_POST = gql`
   query Post($id: ID!) {
-    novel(id: $id) {
+    post(id: $id) {
       id
       url
       title
+    }
+  }
+`;
+
+// mutation to vote
+export const VOTE = gql`
+  mutation Vote($postId: ID!, $userId: ID!) {
+    vote(postId: $postId, userId: $userId) {
+      id
+      postId
+      userId
     }
   }
 `;

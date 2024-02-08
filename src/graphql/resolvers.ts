@@ -13,7 +13,7 @@ export const resolvers = {
     // get all posts
     posts: async (_parent: any, _args: any, context: Context) => {
       return await context.prisma.post.findMany({
-        include: { author: true },
+        include: { postedBy: true },
       });
     },
   },
@@ -21,11 +21,13 @@ export const resolvers = {
   Mutation: {
     // add post
     addPost: async (_parent: any, args: any, context: Context) => {
+      console.log("addPost: ", args);
+
       return await context.prisma.post.create({
         data: {
           title: args.title,
           url: args.url,
-          author: args.author,
+          postedBy: args.author,
         },
       });
     },
@@ -47,6 +49,16 @@ export const resolvers = {
       return await context.prisma.post.delete({
         where: {
           id: args.id,
+        },
+      });
+    },
+
+    // vote for a post
+    vote: async (_parent: any, args: any, context: Context) => {
+      return await context.prisma.vote.create({
+        data: {
+          postId: args.postId,
+          userId: args.userId,
         },
       });
     },

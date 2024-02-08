@@ -5,7 +5,7 @@ import { GET_POSTS } from '@/graphql/queries'
 import { useMutation, useQuery } from '@apollo/client'
 import { FormEvent, useState } from 'react'
 import { IPost } from '../../typing'
-import Link from './Link';
+import LinkI from './Link'
 
 const Links = () => {
     const [title, setTitle] = useState<string>("")
@@ -21,12 +21,14 @@ const Links = () => {
         e.preventDefault();
         if (url === "" || title === "") return alert("Enter fields");
 
-        addPost({ variables: { url, title } });
+        addPost({ variables: { title, url } });
         setTitle("");
         setUrl("");
     };
 
     const posts: IPost[] = data?.posts;
+
+    console.log("posts: ", posts)
 
     if (loading)
         return (
@@ -48,22 +50,22 @@ const Links = () => {
                 onChange={(e) => setTitle(e.target.value)}
                 type="text"
                 placeholder="Enter title"
-                className="bg-transparent border text-white p-2 rounded-lg"
+                className="bg-transparent border text-black p-2 rounded-lg"
             />
             <input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 type="text"
-                placeholder="Enter Image url"
-                className="bg-transparent border text-white p-2 rounded-lg"
+                placeholder="Enter your Link address"
+                className="bg-transparent border text-black p-2 rounded-lg"
             />
             <button className="bg-yellow-500 p-2 rounded-lg ">
-                Add Novel
+                Add Post
             </button>
         </form>
         <div className="grid grid-cols-4 gap-2">
             {posts.map((post) => (
-                <Link key={post.id} post={post} />
+                <LinkI key={post.id} post={post} />
             ))}
         </div>
     </div>

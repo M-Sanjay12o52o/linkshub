@@ -9,7 +9,9 @@ interface LinksProps {
     post: IPost
 }
 
-const Links: FC<LinksProps> = ({ post }) => {
+export const BASE_URL = process.env.NEXT_PUBLIC_URL;
+
+const LinkI: FC<LinksProps> = ({ post }) => {
     const [deletePost] = useMutation(DELETE_POST, {
         refetchQueries: [{ query: GET_POSTS }]
     })
@@ -24,8 +26,14 @@ const Links: FC<LinksProps> = ({ post }) => {
                 )
             }
             <h1 className="font-bold text-xl my-2">{post.title}</h1>
+            <Link
+                href={`${BASE_URL}/link/${post.id}`}
+                className="bg-orange-500 mt-5 p-2 rounded-lg"
+            >
+                Read More
+            </Link>
         </article>
     )
 }
 
-export default Links
+export default LinkI
