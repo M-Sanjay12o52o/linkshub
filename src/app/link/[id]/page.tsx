@@ -1,22 +1,25 @@
 "use client"
 
-import { UPDATE_POST, VOTE } from '@/graphql/mutations'; // Import the VOTE mutation
+import { UPDATE_POST, VOTE } from '@/graphql/mutations';
 import { GET_POST } from '@/graphql/queries';
 import { useMutation, useQuery } from '@apollo/client';
 import { FC, useState } from 'react';
 import { IPost } from '../../../../typing';
 import Link from 'next/link';
+import { format } from 'date-fns';
 
-interface pageProps {
+interface PageProps {
     params: {
         id: string;
     };
 }
 
-const Page: FC<pageProps> = ({ params }) => {
+const Page: FC<PageProps> = ({ params }) => {
     const [title, setTitle] = useState<string>("");
     const [url, setUrl] = useState<string>("");
     const id = params.id;
+
+    console.log("id:", id)
 
     const { data, loading, error } = useQuery(GET_POST, {
         variables: { id },
@@ -27,10 +30,11 @@ const Page: FC<pageProps> = ({ params }) => {
         refetchQueries: [{ query: GET_POST, variables: { id } }]
     });
 
-    // Use the useMutation hook to execute the VOTE mutation
     const [voteMutation] = useMutation(VOTE);
 
     const post: IPost = data?.post;
+
+    console.log("post: ", post)
 
     const handleUpdatePost = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -40,35 +44,37 @@ const Page: FC<pageProps> = ({ params }) => {
         setUrl("");
     };
 
-    // Function to handle the voting action
     const handleVote = () => {
-        // Assuming userId is obtained from user authentication
         const userId = 123; // Replace with actual userId
         voteMutation({ variables: { postId: id, userId: userId } });
     };
 
-    if (loading)
-        return (
-            <p className="text-black text-3xl flex items-center justify-center">
-                Loading ....
-            </p>
-        );
-    if (error)
-        return (
-            <p className="text-black text-3xl flex items-center justify-center">
-                Oops! Something went wrong ....
-            </p>
-        );
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error.message}</p>;
+    if (post === undefined || post === null) return <p>No post found.</p>;
+
+    console.log("post.createdAt: ", post.createdAt)
 
     return (
         <article className="max-w-5xl mx-auto text-white">
-            <section className="flex gap-2 ">
-                {post.url && (
-                    <h1 className='text-3xl'><Link href={post.url}>{post.title}</Link></h1>
-                )}
+            <section>
+                <h1 className="text-black font-bold text-3xl">
+                    {post.url ? (
+                        <Link href={post.url}>{post.title}</Link>
+                    ) : (
+                        post.title
+                    )}
+                </h1>
+                <h3 className='font-bold text-black text-3xl'><span>▲</span>{post.id}</h3>
+                <p className='text-black text-2xl'>
+                    Created at: {post.createdAt ? format(new Date(post.createdAt), 'MMMM dd, yyyy HH:mm:ss') : "Not createdAt"}
+                </p>
+                <p className='text-black text-2xl'>
+                    Updated at: {post.updatedAt ? format(new Date(post.updatedAt), 'MMMM dd, yyyy HH:mm:ss') : "Not updatedAt"}
+                </p>
             </section>
-            {/* update form */}
-            <form onSubmit={handleUpdatePost} className="flex gap-2 ">
+
+            <form onSubmit={handleUpdatePost} className="flex gap-2">
                 <input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -80,13 +86,12 @@ const Page: FC<pageProps> = ({ params }) => {
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     type="text"
-                    placeholder="new url"
+                    placeholder="New URL"
                     className="bg-transparent border text-white p-2 rounded-lg"
                 />
                 <button className="bg-yellow-500 rounded-lg p-2">Update</button>
             </form>
 
-            {/* Voting button */}
             <button onClick={handleVote} className="bg-blue-500 rounded-lg p-2 mt-2">Vote</button>
         </article>
     );

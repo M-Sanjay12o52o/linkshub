@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (credentials?.password === undefined) {
-          return null; // Password not provided, authentication failure
+          return null;
         }
 
         // Compare the provided password with the hashed password stored in the database

@@ -10,6 +10,7 @@ export const typeDefs = `#graphql
         published: Boolean
         author: User
         authorId: ID
+        votes: [Vote!]!
     }
 
     type User {
@@ -24,6 +25,8 @@ export const typeDefs = `#graphql
         id: ID!
         postId: ID!
         userId: ID!
+        post: Post!
+        user: User!
     }
 
     type Query {

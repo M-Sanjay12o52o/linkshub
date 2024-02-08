@@ -11,9 +11,11 @@ const Links = () => {
     const [title, setTitle] = useState<string>("")
     const [url, setUrl] = useState<string>("")
     const { data, loading, error } = useQuery(GET_POSTS)
+    const authorId = "testAuthorId"
+
 
     const [addPost] = useMutation(ADD_POST, {
-        variables: { title, url },
+        variables: { title, url, authorId },
         refetchQueries: [{ query: GET_POSTS }]
     })
 
